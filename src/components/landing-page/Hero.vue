@@ -1,5 +1,5 @@
 <script setup>
-import nav from "../../assets/constant.js"
+import nav from "../../assets/index.js"
 </script>
 
 <template>

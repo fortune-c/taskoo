@@ -1,17 +1,70 @@
 <script setup>
 import { ArrowRightEndOnRectangleIcon, UserPlusIcon } from "@heroicons/vue/16/solid/index.js";
 import { ref } from "vue";
+import { auth } from "@/assets/index.js";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 const isSignUp = ref(true);
 
+const name = ref("");
+const email = ref("");
+const password = ref("");
+const error = ref("");
+const loading = ref(false);
+
 function Signup() {
-  isSignUp.value = false;
+  isSignUp.value = true;
 }
 
 function Signin() {
-  isSignUp.value = true;
+  isSignUp.value = false;
+}
+
+async function SignupHandler() {
+  error.value = "";
+  loading.value = true;
+
+  try {
+    const res = await createUserWithEmailAndPassword(auth, email.value, password.value);
+    await updateProfile(res.user, {
+      displayName: name.value
+    });
+
+    // Switch to Sign In form
+    isSignUp.value = false;
+
+    // clear the form fields
+    name.value = "";
+    email.value = "";
+    password.value = "";
+  } catch (err) {
+    error.value = err.message;
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function SigninHandler() {
+  error.value = "";
+  loading.value = true;
+
+  try {
+    await signInWithEmailAndPassword(auth, email.value, password.value);
+    // Navigate to dashboard
+    window.location.hash = "/dashboard";
+
+    // Clear form fields
+    email.value = "";
+    password.value = "";
+
+  } catch (err) {
+    error.value = err.message;
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
+
 
 <template>
   <div class="auth-container">
@@ -30,40 +83,49 @@ function Signin() {
           <p>Sign into your account</p>
         </div>
       </div>
-      <form action="" method="POST">
+      <form @submit.prevent="isSignUp ? SignupHandler() : SigninHandler()">
+
         <div class="form-name" v-if="isSignUp">
-          <label for="name">Name</label>
-          <input type="text" name="name" placeholder="John Doe"/>
+          <label>Name</label>
+          <input type="text" v-model="name" placeholder="John Doe" />
         </div>
+
         <div class="form-email">
-          <label for="email">Email</label>
-          <input type="email" name="email" placeholder="you@example.com" required/>
+          <label>Email</label>
+          <input type="email" v-model="email" placeholder="you@example.com" required />
         </div>
+
         <div class="form-password">
-          <label for="password">Password</label>
-          <input type="password" name="password" placeholder="******" required/>
+          <label>Password</label>
+          <input type="password" v-model="password" placeholder="******" required />
         </div>
+
         <div class="end-form">
-          <button type="submit">
+          <button type="submit" :disabled="loading">
             <component
                 :is="isSignUp ? UserPlusIcon : ArrowRightEndOnRectangleIcon"
                 class="icons-size"
             />
-            {{ isSignUp ? "Sign up" : "Sign in" }}
+            {{ loading ? "Processing..." : (isSignUp ? "Sign up" : "Sign in") }}
           </button>
-          <a href="" v-if="!isSignUp">Forgot Password?</a></div>
+
+          <a v-if="!isSignUp">Forgot Password?</a>
+
+          <p v-if="error" class="error-text">{{ error }}</p>
+        </div>
+
         <hr>
-        <p>Don't have an account?
+
+        <p>
+          {{ isSignUp ? "Already have an account?" : "Don't have an account?" }}
           <span>
-            <a @click.prevent="Signup" v-if="isSignUp">
-              Sign in
-            </a>
-            <a @click.prevent="Signin" v-else>
-              Sign up
-            </a>
-          </span>
+      <a v-if="isSignUp" @click.prevent="Signin">Sign in</a>
+      <a v-else @click.prevent="Signup">Sign up</a>
+    </span>
         </p>
+
       </form>
+
     </div>
   </div>
 </template>
@@ -153,5 +215,11 @@ function Signin() {
 .form-container p {
   text-align: center;
   margin: 10px 0;
+}
+
+.error-text {
+  color: red;
+  font-size: 0.7rem;
+  margin-top: 8px;
 }
 </style>

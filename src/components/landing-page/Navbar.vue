@@ -1,12 +1,12 @@
 <script setup>
-import nav from "../../assets/constant.js"
+import nav from "../../assets/index.js"
 </script>
 
 <template>
   <header>
     <nav class="bg-white">
       <h4 class="title">
-        <a href="#/">Taskoo</a>
+        Taskoo
       </h4>
 
       <ul class="mobile-null">
@@ -55,6 +55,7 @@ ul {
   background: linear-gradient(to right, rgb(39, 47, 48), rgb(20, 94, 52), rgb(33, 33, 33));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  cursor: pointer;
 }
 
 button {
