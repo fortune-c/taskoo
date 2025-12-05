@@ -1,0 +1,54 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #121212;
+    color: white;
+    font-family: "Ubuntu Mono", monospace;
+}
+
+ul {
+    list-style-type: none;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    transition-duration: 1s;
+    transition-delay: 0.31s;
+}
+
+a:hover {
+    color: rgb(20, 94, 52);
+}
+
+
+button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1px solid white;
+    border-radius: 5px;
+    transition-duration: 1s;
+    transition-delay: 0.31s;
+}
+
+button:hover {
+    background: rgb(20, 94, 52);
+    color: white;
+    border: 1px solid rgb(20, 94, 52);
+}
+
+.icons-size {
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+}
