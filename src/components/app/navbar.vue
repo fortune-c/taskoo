@@ -6,15 +6,17 @@ import { BellAlertIcon, ArrowRightEndOnRectangleIcon } from "@heroicons/vue/16/s
 
 // Reactive variable for user initials
 const userName = ref("")
+const isMenuOpen = ref(false)
 
 // Watch for auth state changes
 onMounted(() => {
   onAuthStateChanged(auth, (user) => {
-    if (user && user.displayName) {
-      // Take first letter of display name
+    if (user?.displayName) {
       userName.value = user.displayName
+      userInitials.value = user.displayName.slice(0, 2)
     } else {
-      userName.value = "User" // fallback if no user or displayName
+      userName.value = 'User'
+      userInitials.value = 'Us'
     }
   })
 })
@@ -40,62 +42,55 @@ function logout() {
     window.location.hash = "/auth"
   })
 }
+
+function toggleMenu() {
+  isMenuOpen.value = !isMenuOpen.value
+}
+
+function goTo(path) {
+  window.location.hash = path
+  isMenuOpen.value = false // auto close mobile menu
+}
+
 </script>
 
 
 
 <template>
-  <div class="dashboard-container">
-    <header>
-      <nav class="bg-white">
-        <h4 class="title">
-          Taskoo
-        </h4>
-        <ul class="menu">
-          <li class="active"><a>Kanban</a></li>
-          <li><a>Team</a></li>
-          <li><a>Tasks</a></li>
-          <li><a>Meetings</a></li>
-        </ul>
-        <div class="user-actions">
-          <button class="user-details">
-            <span class="initials">{{userInitials}}</span>
-            {{ userName }}
-          </button>
-          <button class="bell-border">
-            <BellAlertIcon class="icons-bell"/>
-          </button>
-          <button @click="logout"><ArrowRightEndOnRectangleIcon class="icons-size" /> Logout</button>
-        </div>
+  <header>
+    <nav class="bg-white">
+      <h4 class="title">
+        Taskoo
+      </h4>
 
-      </nav>
-    </header>
+      <!-- Hamburger -->
+      <button class="hamburger" @click="toggleMenu">
+        ☰
+      </button>
 
-    <main>
-      <h1>Kanban Board</h1>
-      <p>Create a team to start managing tasks</p>
-    </main>
-  </div>
+      <ul class="menu" :class="{ open: isMenuOpen }">
+        <li><a @click="goTo('/kanban')">Kanban</a></li>
+        <li><a @click="goTo('/teams')">Team</a></li>
+        <li><a @click="goTo('/tasks')">Tasks</a></li>
+        <li><a @click="goTo('/meetings')">Meetings</a></li>
+      </ul>
+      <div class="user-actions" :class="{ open: isMenuOpen }">
+        <button class="user-details">
+          <span class="initials">{{ userInitials }}</span>
+          {{ userName }}
+        </button>
+        <button class="bell-border">
+          <BellAlertIcon class="icons-bell" />
+        </button>
+        <button @click="logout">
+          <ArrowRightEndOnRectangleIcon class="icons-size" /> Logout
+        </button>
+      </div>
+    </nav>
+  </header>
 </template>
 
 <style scoped>
-.dashboard-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/*Continue from here tomorrow*/
-main {
-  padding: 20px;
-  background-color: #121212;
-  display: flex;
-  flex-direction: column;
-  justify-content: left;
-  text-align: left;
-  width: 80%;
-}
-
 header {
   width: 100%;
   display: flex;
@@ -121,7 +116,7 @@ nav {
 .title {
   font-size: 2rem;
   background: linear-gradient(to right, rgb(39, 47, 48), rgb(20, 94, 52), rgb(33, 33, 33));
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   cursor: pointer;
 }
@@ -134,7 +129,7 @@ nav {
   width: 340px;
 }
 
-.user-actions > .user-details {
+.user-actions>.user-details {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -183,5 +178,71 @@ button:hover {
 .icons-bell {
   width: 20px;
   height: 20px;
+}
+
+/* Hamburger button */
+.hamburger {
+  display: none;
+  font-size: 1.8rem;
+  background: none !important;
+  border: none !important;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  header {
+    width: 100%;
+  }
+  nav {
+    display: flex;
+    width: 95%;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .menu {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    display: none;
+    margin-top: 15px;
+    gap: 10px;
+  }
+
+  .menu.open {
+    display: flex;
+  }
+
+  .user-actions {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 15px;
+  }
+
+  .user-actions>.user-details {
+    width: auto;
+  }
+
+  button {
+    width: auto;
+  }
+
+  .user-actions {
+    width: 100%;
+    display: none;
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 10px;
+    align-items: center;
+    justify-content: left;
+  }
+
+  .user-actions.open {
+    display: flex;
+  }
 }
 </style>

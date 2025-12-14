@@ -9,11 +9,6 @@ import nav from "../../assets/index.js"
         Taskoo
       </h4>
 
-      <ul class="mobile-null">
-        <li><a href="">Features</a></li>
-        <li><a href="">How it Works</a></li>
-      </ul>
-
       <ul>
         <li><a href="#/auth" class="null">Sign in</a></li>
         <li>
@@ -53,7 +48,7 @@ ul {
 .title {
   font-size: 2rem;
   background: linear-gradient(to right, rgb(39, 47, 48), rgb(20, 94, 52), rgb(33, 33, 33));
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   cursor: pointer;
 }
@@ -89,15 +84,8 @@ button:hover {
   border-radius: 2px;
 }
 
-.null {
-  display: none;
-}
 
 @media (max-width: 768px) {
-  .mobile-null {
-    display: none;
-  }
-
   .nav-links {
     position: absolute;
     top: 70px;
@@ -117,5 +105,9 @@ button:hover {
   .hamburger {
     display: flex;
   }
+  
+  .null {
+  display: none;
+}
 }
 </style>
